@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 const _baseUrl = 'http://localhost:8080/api/v1';
@@ -70,3 +71,46 @@ class _AuthInterceptor extends QueuedInterceptorsWrapper {
     }
   }
 }
+
+class ApiClient {
+  final Dio _dio;
+
+  ApiClient(this._dio);
+
+  Future<Map<String, dynamic>> post(
+    String path, {
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      final response = await _dio.post(path, data: data);
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      final errorData = e.response?.data as Map<String, dynamic>?;
+      final error = errorData?['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN_ERROR',
+        message: error?['message'] as String? ?? '알 수 없는 오류가 발생했습니다',
+        statusCode: e.response?.statusCode ?? 500,
+      );
+    }
+  }
+}
+
+class ApiException implements Exception {
+  final String code;
+  final String message;
+  final int statusCode;
+
+  ApiException({
+    required this.code,
+    required this.message,
+    required this.statusCode,
+  });
+
+  @override
+  String toString() => 'ApiException($statusCode): [$code] $message';
+}
+
+final apiClientProvider = Provider<ApiClient>(
+  (ref) => ApiClient(createDio()),
+);

@@ -14,10 +14,19 @@ class MockAuthRepository extends Mock implements AuthRepository {}
 
 class MockTokenStorage extends Mock implements TokenStorage {}
 
+class FakeLoginRequest extends Fake implements LoginRequest {}
+
+class FakeSignupRequest extends Fake implements SignupRequest {}
+
 void main() {
   late MockAuthRepository mockAuthRepository;
   late MockTokenStorage mockTokenStorage;
   late ProviderContainer container;
+
+  setUpAll(() {
+    registerFallbackValue(FakeLoginRequest());
+    registerFallbackValue(FakeSignupRequest());
+  });
 
   setUp(() {
     mockAuthRepository = MockAuthRepository();

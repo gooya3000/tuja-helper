@@ -2,9 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tuja_helper/features/auth/data/auth_repository.dart';
 import 'package:tuja_helper/features/auth/data/dto/login_request.dart';
-import 'package:tuja_helper/features/auth/data/dto/login_response.dart';
 import 'package:tuja_helper/features/auth/data/dto/signup_request.dart';
-import 'package:tuja_helper/features/auth/data/dto/signup_response.dart';
 import 'package:tuja_helper/shared/network/api_client.dart';
 
 class MockApiClient extends Mock implements ApiClient {}
@@ -24,7 +22,6 @@ void main() {
         email: 'test@example.com',
         password: 'password123',
       );
-      final expectedResponse = SignupResponse(userId: 1);
 
       when(() => mockApiClient.post(
             '/auth/signup',
