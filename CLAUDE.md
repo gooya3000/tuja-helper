@@ -29,7 +29,7 @@ cd mobile && flutter pub get && flutter run
 | Phase | 내용 | 상태 | 상세 |
 |-------|------|------|------|
 | 0 | 프로젝트 초기 세팅 | ✅ 완료 | [phase0-setup.md](docs/phases/phase0-setup.md) |
-| 1 | 인증 (JWT) | 🔲 미시작 | [phase1-auth.md](docs/phases/phase1-auth.md) |
+| 1 | 인증 (JWT) | ✅ 완료 | [phase1-auth.md](docs/phases/phase1-auth.md) |
 | 2 | 한투 API 연동 (계좌/잔고) | 🔲 미시작 | [phase2-kis-api.md](docs/phases/phase2-kis-api.md) |
 | 3 | 보유 종목 / 수익률 | 🔲 미시작 | [phase3-portfolio.md](docs/phases/phase3-portfolio.md) |
 | 4 | 시세 조회 + 알림 | 🔲 미시작 | [phase4-quote-alert.md](docs/phases/phase4-quote-alert.md) |
