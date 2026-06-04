@@ -14,6 +14,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpStatus
+import org.springframework.security.crypto.password.PasswordEncoder
 
 @ExtendWith(MockKExtension::class)
 class AuthServiceTest {
@@ -21,7 +22,9 @@ class AuthServiceTest {
     private val userRepository: UserRepository = mockk()
     private val jwtProvider: JwtProvider = mockk()
     private val redisRefreshTokenRepository: RedisRefreshTokenRepository = mockk()
-    private val authService = AuthService(userRepository, jwtProvider, redisRefreshTokenRepository)
+    // 단위 테스트에서 BCrypt 해시 의존성을 없애기 위해 PasswordEncoder를 mock으로 주입
+    private val passwordEncoder: PasswordEncoder = mockk()
+    private val authService = AuthService(userRepository, jwtProvider, redisRefreshTokenRepository, passwordEncoder)
 
     // -------------------------------------------------------------------------
     // 회원가입 테스트
@@ -33,6 +36,7 @@ class AuthServiceTest {
         val savedUser = User(id = 1L, email = "test@example.com", password = "hashed_password")
 
         every { userRepository.existsByEmail("test@example.com") } returns false
+        every { passwordEncoder.encode("password123") } returns "hashed_password"
         every { userRepository.save(any()) } returns savedUser
 
         val result = authService.signup(request)
@@ -65,6 +69,7 @@ class AuthServiceTest {
         val user = User(id = 1L, email = "test@example.com", password = "hashed_password")
 
         every { userRepository.findByEmail("test@example.com") } returns user
+        every { passwordEncoder.matches("password123", "hashed_password") } returns true
         every { jwtProvider.createAccessToken(1L) } returns "access.token.value"
         every { jwtProvider.createRefreshToken(1L) } returns "refresh.token.value"
         every { redisRefreshTokenRepository.save(1L, "refresh.token.value") } returns Unit
@@ -81,6 +86,7 @@ class AuthServiceTest {
         val user = User(id = 1L, email = "test@example.com", password = "hashed_correct_password")
 
         every { userRepository.findByEmail("test@example.com") } returns user
+        every { passwordEncoder.matches("wrong_password", "hashed_correct_password") } returns false
 
         assertThatThrownBy { authService.login(request) }
             .isInstanceOf(TujaException::class.java)

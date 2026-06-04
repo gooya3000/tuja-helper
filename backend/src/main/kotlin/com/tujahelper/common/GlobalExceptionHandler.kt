@@ -20,7 +20,7 @@ class GlobalExceptionHandler {
         val message = e.bindingResult.fieldErrors.firstOrNull()?.defaultMessage ?: "입력값이 올바르지 않습니다."
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(ApiResponse.fail("VALIDATION_ERROR", message))
+            .body(ApiResponse.fail("INVALID_INPUT", message))
     }
 
     @ExceptionHandler(Exception::class)

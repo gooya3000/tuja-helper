@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.tujahelper.auth.dto.LoginRequest
 import com.tujahelper.auth.dto.RefreshRequest
 import com.tujahelper.auth.dto.SignupRequest
+import com.tujahelper.config.EmbeddedRedisConfig
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -18,6 +20,7 @@ import org.springframework.test.web.servlet.post
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@Import(EmbeddedRedisConfig::class)
 class AuthControllerTest {
 
     @Autowired
