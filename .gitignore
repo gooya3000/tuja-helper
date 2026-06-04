@@ -1,0 +1,24 @@
+# Backend
+backend/.gradle/
+backend/build/
+backend/.env
+backend/src/main/resources/firebase-service-account.json
+
+# Mobile
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/google-services.json
+mobile/ios/Runner/GoogleService-Info.plist
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+
+# Claude Code local settings
+.claude/settings.local.json

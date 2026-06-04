@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: tujahelper-postgres
+    environment:
+      POSTGRES_DB: tujahelper
+      POSTGRES_USER: tujahelper
+      POSTGRES_PASSWORD: tujahelper
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: tujahelper-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:

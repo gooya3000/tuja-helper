@@ -1,0 +1,47 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tujahelper
+    username: ${DB_USERNAME:tujahelper}
+    password: ${DB_PASSWORD:tujahelper}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:local-dev-secret-key-must-be-at-least-256-bits-long}
+    access-token-expiry-ms: 1800000    # 30분
+    refresh-token-expiry-ms: 604800000 # 7일
+
+  encryption:
+    key: ${ENCRYPTION_KEY:local-dev-aes-key-32bytes!!}  # 로컬용, 배포 시 환경변수 교체
+
+  kis:
+    base-url: https://openapivts.koreainvestment.com:29443  # 모의투자 환경
+    websocket-url: ws://ops.koreainvestment.com:31000
+
+  firebase:
+    credentials-path: ${FIREBASE_CREDENTIALS_PATH:firebase-service-account.json}
+
+logging:
+  level:
+    com.tujahelper: DEBUG
+    org.springframework.security: INFO
