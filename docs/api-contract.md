@@ -100,7 +100,79 @@ Access Token 갱신
 ---
 
 ## Phase 2 — 한투 API 연동
-> 구현 시 Backend 에이전트가 이 섹션을 채운다
+
+### POST /brokerage/credentials
+증권사 API Key 등록 (인증 필요 — JWT Bearer)
+
+**Request**
+```json
+{
+  "appKey": "string",
+  "appSecret": "string",
+  "accountNo": "string"
+}
+```
+
+**Response 201**
+```json
+{
+  "success": true,
+  "data": { "id": "long" }
+}
+```
+
+**Error Cases**
+| code | message | HTTP |
+|------|---------|------|
+| `DUPLICATE_CREDENTIAL` | 이미 등록된 API Key입니다 | 409 |
+| `INVALID_INPUT` | 입력값이 올바르지 않습니다 | 400 |
+
+---
+
+### GET /accounts
+계좌 목록 조회 (인증 필요)
+
+**Response 200**
+```json
+{
+  "success": true,
+  "data": {
+    "accounts": [
+      { "accountNo": "string", "accountName": "string" }
+    ]
+  }
+}
+```
+
+---
+
+### GET /accounts/{accountNo}/balance
+잔고 조회 (인증 필요)
+
+**Response 200**
+```json
+{
+  "success": true,
+  "data": {
+    "totalEvaluationAmount": "string",
+    "depositAmount": "string",
+    "holdings": [
+      {
+        "stockCode": "string",
+        "stockName": "string",
+        "quantity": "int",
+        "evaluationAmount": "string"
+      }
+    ]
+  }
+}
+```
+
+**Error Cases**
+| code | message | HTTP |
+|------|---------|------|
+| `CREDENTIAL_NOT_FOUND` | 등록된 증권사 정보가 없습니다 | 404 |
+| `KIS_API_ERROR` | 한국투자증권 API 오류가 발생했습니다 | 502 |
 
 ## Phase 3 — 보유 종목 / 수익률
 > 구현 시 Backend 에이전트가 이 섹션을 채운다
