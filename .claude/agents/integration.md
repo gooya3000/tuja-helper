@@ -38,6 +38,12 @@ cd mobile && flutter test
 
 ### 4-A. 전체 통과 시
 
+push 시 pre-push 훅이 테스트를 중복 실행하지 않도록 플래그 파일을 생성한다:
+
+```bash
+touch /tmp/tuja_tests_passed
+```
+
 아래 형식으로 커밋 메시지 초안을 작성하고 사용자에게 확인을 요청한다:
 
 ```

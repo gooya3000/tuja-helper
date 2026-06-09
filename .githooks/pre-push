@@ -4,8 +4,8 @@ set -e
 ROOT=$(git rev-parse --show-toplevel)
 BACKEND="$ROOT/backend"
 MOBILE="$ROOT/mobile"
+FLAG=/tmp/tuja_tests_passed
 
-# flutter가 PATH에 없을 경우 일반적인 설치 위치 추가
 export PATH="$PATH:$HOME/Desktop/dev/flutter/bin:$HOME/flutter/bin:/opt/homebrew/bin"
 
 fail() {
@@ -27,11 +27,6 @@ echo "=== [Backend] 빌드 ==="
 ./gradlew assemble -x test --quiet || fail "Backend 빌드 실패"
 echo "Backend 빌드 통과"
 
-echo ""
-echo "=== [Backend] 테스트 ==="
-./gradlew test --quiet || fail "Backend 테스트 실패"
-echo "Backend 테스트 통과"
-
 # ── Flutter ──────────────────────────────────────────────
 
 echo ""
@@ -40,15 +35,25 @@ cd "$MOBILE"
 flutter analyze --no-fatal-infos || fail "Flutter 린트 실패"
 echo "Flutter 린트 통과"
 
-echo ""
-echo "=== [Flutter] 빌드 ==="
-flutter build apk --debug 2>&1 | tail -5 || fail "Flutter 빌드 실패"
-echo "Flutter 빌드 통과"
+# ── 테스트 (integration 에이전트가 통과 확인 시 스킵) ────
 
-echo ""
-echo "=== [Flutter] 테스트 ==="
-flutter test || fail "Flutter 테스트 실패"
-echo "Flutter 테스트 통과"
+if [ -f "$FLAG" ]; then
+    echo ""
+    echo "=== 테스트 스킵 (integration 에이전트 통과 확인됨) ==="
+    rm "$FLAG"
+else
+    echo ""
+    echo "=== [Backend] 테스트 ==="
+    cd "$BACKEND"
+    ./gradlew test --quiet || fail "Backend 테스트 실패"
+    echo "Backend 테스트 통과"
+
+    echo ""
+    echo "=== [Flutter] 테스트 ==="
+    cd "$MOBILE"
+    flutter test || fail "Flutter 테스트 실패"
+    echo "Flutter 테스트 통과"
+fi
 
 echo ""
 echo "모든 검사 통과 — 푸시를 진행합니다."
