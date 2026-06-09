@@ -9,6 +9,16 @@
 
 ---
 
+## 최초 클론 후 설정
+
+```bash
+git config core.hooksPath .githooks
+```
+
+push 시 린트 → 빌드 → 테스트를 자동으로 실행하는 pre-push 훅이 활성화됩니다.
+
+---
+
 ## 로컬 환경 시작
 
 ### 1. DB / Redis 실행
