@@ -94,6 +94,21 @@ class ApiClient {
       );
     }
   }
+
+  Future<Map<String, dynamic>> get(String path) async {
+    try {
+      final response = await _dio.get(path);
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      final errorData = e.response?.data as Map<String, dynamic>?;
+      final error = errorData?['error'] as Map<String, dynamic>?;
+      throw ApiException(
+        code: error?['code'] as String? ?? 'UNKNOWN_ERROR',
+        message: error?['message'] as String? ?? '알 수 없는 오류가 발생했습니다',
+        statusCode: e.response?.statusCode ?? 500,
+      );
+    }
+  }
 }
 
 class ApiException implements Exception {
