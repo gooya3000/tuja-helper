@@ -5,10 +5,8 @@ ROOT=$(git rev-parse --show-toplevel)
 BACKEND="$ROOT/backend"
 MOBILE="$ROOT/mobile"
 
-# 셸 프로파일 로드 (flutter 등 PATH 확보)
-[ -f "$HOME/.zshrc" ] && source "$HOME/.zshrc" 2>/dev/null
-[ -f "$HOME/.bashrc" ] && source "$HOME/.bashrc" 2>/dev/null
-[ -f "$HOME/.bash_profile" ] && source "$HOME/.bash_profile" 2>/dev/null
+# flutter가 PATH에 없을 경우 일반적인 설치 위치 추가
+export PATH="$PATH:$HOME/Desktop/dev/flutter/bin:$HOME/flutter/bin:/opt/homebrew/bin"
 
 fail() {
     echo ""
