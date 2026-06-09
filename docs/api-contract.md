@@ -100,7 +100,91 @@ Access Token 갱신
 ---
 
 ## Phase 2 — 한투 API 연동
-> 구현 시 Backend 에이전트가 이 섹션을 채운다
+
+### POST /brokerage/credentials
+한국투자증권 API Key/Secret/계좌번호 등록 (JWT 인증 필요)
+
+**Request**
+```json
+{
+  "appKey": "string (필수)",
+  "appSecret": "string (필수)",
+  "accountNo": "string (필수)"
+}
+```
+
+**Response 200**
+```json
+{
+  "success": true
+}
+```
+
+**Error Cases**
+| code | message | HTTP |
+|------|---------|------|
+| `INVALID_INPUT` | appKey는 필수입니다 | 400 |
+| `UNAUTHORIZED` | 인증이 필요합니다 | 401 |
+
+**구현 상세**
+- appKey, appSecret은 AES-256 CBC 모드로 암호화하여 DB 저장 (IV는 암호문에 prefix)
+- 이미 등록된 경우 덮어쓰기(업데이트)
+
+---
+
+### GET /accounts
+계좌 목록 조회 (JWT 인증 필요)
+
+**Response 200**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "accountNo": "string",
+      "accountName": "string"
+    }
+  ]
+}
+```
+
+**Error Cases**
+| code | message | HTTP |
+|------|---------|------|
+| `CREDENTIALS_NOT_FOUND` | API 키가 등록되어 있지 않습니다 | 404 |
+| `UNAUTHORIZED` | 인증이 필요합니다 | 401 |
+
+---
+
+### GET /accounts/{accountNo}/balance
+잔고 조회 (JWT 인증 필요)
+
+**Path Variable**
+- `accountNo`: 계좌번호
+
+**Response 200**
+```json
+{
+  "success": true,
+  "data": {
+    "totalEvaluationAmount": "number (총평가금액)",
+    "depositAmount": "number (예수금)",
+    "totalProfitLossAmount": "number (평가손익합계)",
+    "totalProfitLossRate": "number (수익률)"
+  }
+}
+```
+
+**Error Cases**
+| code | message | HTTP |
+|------|---------|------|
+| `CREDENTIALS_NOT_FOUND` | API 키가 등록되어 있지 않습니다 | 404 |
+| `UNAUTHORIZED` | 인증이 필요합니다 | 401 |
+
+**구현 상세**
+- 한투 OAuth 토큰은 Redis에 `kis:token:{userId}` 키로 캐싱 (TTL = 토큰 만료시간)
+- 캐시 미스 시 `POST /oauth2/tokenP`로 토큰 재발급
+- 한투 모의투자 환경: `openapivts.koreainvestment.com:29443`
 
 ## Phase 3 — 보유 종목 / 수익률
 > 구현 시 Backend 에이전트가 이 섹션을 채운다
