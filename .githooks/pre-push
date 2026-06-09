@@ -14,6 +14,26 @@ fail() {
     exit 1
 }
 
+# ── 문서 전용 변경 시 스킵 ───────────────────────────────
+
+PUSH_INPUT=$(cat)
+NON_DOC=""
+while IFS=' ' read -r local_ref local_sha remote_ref remote_sha; do
+    [ -z "$local_ref" ] && continue
+    [ "$local_sha" = "0000000000000000000000000000000000000000" ] && continue
+    if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+        RANGE="$local_sha"
+    else
+        RANGE="${remote_sha}..${local_sha}"
+    fi
+    NON_DOC="$NON_DOC$(git diff --name-only "$RANGE" 2>/dev/null | grep -vE '\.(md|txt)$|^docs/' || true)"
+done <<< "$PUSH_INPUT"
+
+if [ -z "$(echo "$NON_DOC" | tr -d '[:space:]')" ]; then
+    echo "문서 변경만 감지 — 검사를 건너뜁니다."
+    exit 0
+fi
+
 # ── Backend ──────────────────────────────────────────────
 
 echo ""
