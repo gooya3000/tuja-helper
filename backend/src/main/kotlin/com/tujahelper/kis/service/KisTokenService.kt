@@ -9,7 +9,11 @@ class KisTokenService(
     private val kisOAuthClient: KisOAuthClient,
     private val kisTokenRepository: KisTokenRepository,
 ) {
-    fun getToken(userId: Long, appKey: String, appSecret: String): String {
+    fun getToken(
+        userId: Long,
+        appKey: String,
+        appSecret: String,
+    ): String {
         // 캐시에 토큰이 있으면 바로 반환
         val cached = kisTokenRepository.findByUserId(userId)
         if (cached != null) return cached

@@ -15,7 +15,6 @@ import org.springframework.data.redis.core.StringRedisTemplate
  */
 @TestConfiguration
 class EmbeddedRedisConfig {
-
     @Bean
     @Primary
     fun testRedisConnectionFactory(): RedisConnectionFactory {

@@ -21,8 +21,11 @@ class EncryptionService(
     // 키는 정확히 32바이트(256비트)가 필요하므로 패딩 또는 자름 처리
     private val keyBytes: ByteArray by lazy {
         rawKey.toByteArray(Charsets.UTF_8).let { bytes ->
-            if (bytes.size >= 32) bytes.copyOf(32)
-            else bytes.copyOf(32).also { padded -> bytes.copyInto(padded) }
+            if (bytes.size >= 32) {
+                bytes.copyOf(32)
+            } else {
+                bytes.copyOf(32).also { padded -> bytes.copyInto(padded) }
+            }
         }
     }
 

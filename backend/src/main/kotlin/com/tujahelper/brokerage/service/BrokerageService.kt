@@ -18,7 +18,12 @@ class BrokerageService(
     private val encryptionService: EncryptionService,
 ) {
     @Transactional
-    fun saveCredentials(userId: Long, appKey: String, appSecret: String, accountNo: String): BrokerageCredential {
+    fun saveCredentials(
+        userId: Long,
+        appKey: String,
+        appSecret: String,
+        accountNo: String,
+    ): BrokerageCredential {
         val encryptedKey = encryptionService.encrypt(appKey)
         val encryptedSecret = encryptionService.encrypt(appSecret)
 
@@ -36,7 +41,7 @@ class BrokerageService(
                     appKey = encryptedKey,
                     appSecret = encryptedSecret,
                     accountNo = accountNo,
-                )
+                ),
             )
         }
     }

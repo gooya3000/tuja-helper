@@ -13,7 +13,10 @@ class RedisRefreshTokenRepository(
         private val TTL = Duration.ofDays(7)
     }
 
-    fun save(userId: Long, refreshToken: String) {
+    fun save(
+        userId: Long,
+        refreshToken: String,
+    ) {
         redisTemplate.opsForValue().set("$KEY_PREFIX$userId", refreshToken, TTL)
     }
 

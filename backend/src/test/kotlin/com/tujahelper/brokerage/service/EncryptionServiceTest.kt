@@ -4,7 +4,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class EncryptionServiceTest {
-
     // AES-256 키는 32바이트여야 함
     private val encryptionService = EncryptionService("test-aes-key-32bytes!!!!!!!!!!!")
 

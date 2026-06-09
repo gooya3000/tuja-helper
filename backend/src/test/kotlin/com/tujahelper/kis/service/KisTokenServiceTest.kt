@@ -10,11 +10,9 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.Instant
 
 @ExtendWith(MockKExtension::class)
 class KisTokenServiceTest {
-
     private val kisOAuthClient: KisOAuthClient = mockk()
     private val kisTokenRepository: KisTokenRepository = mockk()
     private val kisTokenService = KisTokenService(kisOAuthClient, kisTokenRepository)
@@ -39,12 +37,13 @@ class KisTokenServiceTest {
         val expiresIn = 86400L // 1일
 
         every { kisTokenRepository.findByUserId(userId) } returns null
-        every { kisOAuthClient.issueToken("app-key", "app-secret") } returns KisTokenResponse(
-            accessToken = newToken,
-            tokenType = "Bearer",
-            expiresIn = expiresIn,
-            accessTokenTokenExpired = "2025-01-01 00:00:00",
-        )
+        every { kisOAuthClient.issueToken("app-key", "app-secret") } returns
+            KisTokenResponse(
+                accessToken = newToken,
+                tokenType = "Bearer",
+                expiresIn = expiresIn,
+                accessTokenTokenExpired = "2025-01-01 00:00:00",
+            )
         every { kisTokenRepository.save(userId, newToken, expiresIn) } returns Unit
 
         val result = kisTokenService.getToken(userId, "app-key", "app-secret")

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
-
     @ExceptionHandler(TujaException::class)
     fun handleTujaException(e: TujaException): ResponseEntity<ApiResponse<Unit>> =
         ResponseEntity

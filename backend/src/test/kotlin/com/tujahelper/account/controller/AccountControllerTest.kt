@@ -1,12 +1,12 @@
 package com.tujahelper.account.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ninjasquad.springmockk.MockkBean
 import com.tujahelper.account.dto.AccountDto
 import com.tujahelper.account.dto.BalanceDto
 import com.tujahelper.account.service.AccountService
 import com.tujahelper.auth.service.JwtProvider
 import com.tujahelper.config.EmbeddedRedisConfig
-import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +23,6 @@ import java.math.BigDecimal
 @ActiveProfiles("test")
 @Import(EmbeddedRedisConfig::class)
 class AccountControllerTest {
-
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -45,9 +44,10 @@ class AccountControllerTest {
         val userId = 1L
         val accessToken = jwtProvider.createAccessToken(userId)
 
-        every { accountService.getAccounts(userId) } returns listOf(
-            AccountDto(accountNo = "12345678901234", accountName = "종합계좌"),
-        )
+        every { accountService.getAccounts(userId) } returns
+            listOf(
+                AccountDto(accountNo = "12345678901234", accountName = "종합계좌"),
+            )
 
         mockMvc.get("/api/v1/accounts") {
             header("Authorization", "Bearer $accessToken")
@@ -77,12 +77,13 @@ class AccountControllerTest {
         val accountNo = "12345678901234"
         val accessToken = jwtProvider.createAccessToken(userId)
 
-        every { accountService.getBalance(userId, accountNo) } returns BalanceDto(
-            totalEvaluationAmount = BigDecimal("10000000"),
-            depositAmount = BigDecimal("5000000"),
-            totalProfitLossAmount = BigDecimal("500000"),
-            totalProfitLossRate = BigDecimal("5.26"),
-        )
+        every { accountService.getBalance(userId, accountNo) } returns
+            BalanceDto(
+                totalEvaluationAmount = BigDecimal("10000000"),
+                depositAmount = BigDecimal("5000000"),
+                totalProfitLossAmount = BigDecimal("500000"),
+                totalProfitLossRate = BigDecimal("5.26"),
+            )
 
         mockMvc.get("/api/v1/accounts/$accountNo/balance") {
             header("Authorization", "Bearer $accessToken")

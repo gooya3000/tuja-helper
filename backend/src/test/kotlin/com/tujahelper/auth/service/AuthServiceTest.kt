@@ -8,7 +8,6 @@ import com.tujahelper.common.TujaException
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -18,10 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder
 
 @ExtendWith(MockKExtension::class)
 class AuthServiceTest {
-
     private val userRepository: UserRepository = mockk()
     private val jwtProvider: JwtProvider = mockk()
     private val redisRefreshTokenRepository: RedisRefreshTokenRepository = mockk()
+
     // 단위 테스트에서 BCrypt 해시 의존성을 없애기 위해 PasswordEncoder를 mock으로 주입
     private val passwordEncoder: PasswordEncoder = mockk()
     private val authService = AuthService(userRepository, jwtProvider, redisRefreshTokenRepository, passwordEncoder)

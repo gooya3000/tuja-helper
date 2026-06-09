@@ -14,11 +14,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1")
 class MeController {
-
     @Operation(summary = "내 정보 조회", security = [SecurityRequirement(name = "bearerAuth")])
     @GetMapping("/me")
     fun me(
         @AuthenticationPrincipal userId: Long,
-    ): ResponseEntity<ApiResponse<Map<String, Long>>> =
-        ResponseEntity.ok(ApiResponse.ok(mapOf("userId" to userId)))
+    ): ResponseEntity<ApiResponse<Map<String, Long>>> = ResponseEntity.ok(ApiResponse.ok(mapOf("userId" to userId)))
 }

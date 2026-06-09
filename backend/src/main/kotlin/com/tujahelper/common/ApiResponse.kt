@@ -7,9 +7,13 @@ data class ApiResponse<T>(
 ) {
     companion object {
         fun <T> ok(data: T) = ApiResponse(success = true, data = data)
+
         fun ok() = ApiResponse<Unit>(success = true)
-        fun fail(code: String, message: String) =
-            ApiResponse<Unit>(success = false, error = ApiError(code, message))
+
+        fun fail(
+            code: String,
+            message: String,
+        ) = ApiResponse<Unit>(success = false, error = ApiError(code, message))
     }
 }
 

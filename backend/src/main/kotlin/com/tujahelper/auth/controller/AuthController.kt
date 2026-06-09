@@ -35,13 +35,11 @@ class AuthController(
     @PostMapping("/login")
     fun login(
         @Valid @RequestBody request: LoginRequest,
-    ): ResponseEntity<ApiResponse<LoginResponse>> =
-        ResponseEntity.ok(ApiResponse.ok(authService.login(request)))
+    ): ResponseEntity<ApiResponse<LoginResponse>> = ResponseEntity.ok(ApiResponse.ok(authService.login(request)))
 
     @Operation(summary = "토큰 갱신")
     @PostMapping("/refresh")
     fun refresh(
         @RequestBody request: RefreshRequest,
-    ): ResponseEntity<ApiResponse<RefreshResponse>> =
-        ResponseEntity.ok(ApiResponse.ok(authService.refresh(request.refreshToken)))
+    ): ResponseEntity<ApiResponse<RefreshResponse>> = ResponseEntity.ok(ApiResponse.ok(authService.refresh(request.refreshToken)))
 }

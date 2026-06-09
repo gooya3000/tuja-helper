@@ -20,7 +20,6 @@ class AuthService(
     private val redisRefreshTokenRepository: RedisRefreshTokenRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
-
     @Transactional
     fun signup(request: SignupRequest): SignupResponse {
         if (userRepository.existsByEmail(request.email)) {
@@ -33,8 +32,9 @@ class AuthService(
 
     @Transactional(readOnly = true)
     fun login(request: LoginRequest): LoginResponse {
-        val user = userRepository.findByEmail(request.email)
-            ?: throw TujaException("INVALID_CREDENTIALS", "이메일 또는 비밀번호가 올바르지 않습니다", HttpStatus.UNAUTHORIZED)
+        val user =
+            userRepository.findByEmail(request.email)
+                ?: throw TujaException("INVALID_CREDENTIALS", "이메일 또는 비밀번호가 올바르지 않습니다", HttpStatus.UNAUTHORIZED)
         if (!passwordEncoder.matches(request.password, user.password)) {
             throw TujaException("INVALID_CREDENTIALS", "이메일 또는 비밀번호가 올바르지 않습니다", HttpStatus.UNAUTHORIZED)
         }

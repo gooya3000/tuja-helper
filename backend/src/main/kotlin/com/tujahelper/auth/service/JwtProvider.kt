@@ -55,11 +55,12 @@ class JwtProvider(
     }
 
     fun getUserIdFromToken(token: String): Long {
-        val claims = Jwts.parser()
-            .verifyWith(secretKey)
-            .build()
-            .parseSignedClaims(token)
-            .payload
+        val claims =
+            Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .payload
         return claims.subject.toLong()
     }
 }

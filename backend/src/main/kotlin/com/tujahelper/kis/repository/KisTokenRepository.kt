@@ -16,7 +16,11 @@ class KisTokenRepository(
         return redisTemplate.opsForValue().get("$KEY_PREFIX$userId")
     }
 
-    fun save(userId: Long, accessToken: String, expiresIn: Long) {
+    fun save(
+        userId: Long,
+        accessToken: String,
+        expiresIn: Long,
+    ) {
         // expiresIn은 초 단위
         redisTemplate.opsForValue().set(
             "$KEY_PREFIX$userId",

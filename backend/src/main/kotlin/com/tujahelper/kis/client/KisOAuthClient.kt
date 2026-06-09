@@ -10,16 +10,21 @@ import org.springframework.web.reactive.function.client.bodyToMono
 class KisOAuthClient(
     @Value("\${app.kis.base-url}") private val baseUrl: String,
 ) {
-    private val webClient: WebClient = WebClient.builder()
-        .baseUrl(baseUrl)
-        .build()
+    private val webClient: WebClient =
+        WebClient.builder()
+            .baseUrl(baseUrl)
+            .build()
 
-    fun issueToken(appKey: String, appSecret: String): KisTokenResponse {
-        val requestBody = mapOf(
-            "grant_type" to "client_credentials",
-            "appkey" to appKey,
-            "appsecret" to appSecret,
-        )
+    fun issueToken(
+        appKey: String,
+        appSecret: String,
+    ): KisTokenResponse {
+        val requestBody =
+            mapOf(
+                "grant_type" to "client_credentials",
+                "appkey" to appKey,
+                "appsecret" to appSecret,
+            )
 
         return webClient.post()
             .uri("/oauth2/tokenP")

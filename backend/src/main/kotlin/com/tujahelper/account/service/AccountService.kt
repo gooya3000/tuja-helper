@@ -16,14 +16,19 @@ class AccountService(
     private val kisApiClient: KisApiClient,
 ) {
     fun getAccounts(userId: Long): List<AccountDto> {
-        val credentials = brokerageService.getCredentials(userId)
-            ?: throw TujaException("CREDENTIALS_NOT_FOUND", "API 키가 등록되어 있지 않습니다.", HttpStatus.NOT_FOUND)
+        val credentials =
+            brokerageService.getCredentials(userId)
+                ?: throw TujaException("CREDENTIALS_NOT_FOUND", "API 키가 등록되어 있지 않습니다.", HttpStatus.NOT_FOUND)
         return listOf(AccountDto(accountNo = credentials.accountNo, accountName = "종합계좌"))
     }
 
-    fun getBalance(userId: Long, accountNo: String): BalanceDto {
-        val credentials = brokerageService.getCredentials(userId)
-            ?: throw TujaException("CREDENTIALS_NOT_FOUND", "API 키가 등록되어 있지 않습니다.", HttpStatus.NOT_FOUND)
+    fun getBalance(
+        userId: Long,
+        accountNo: String,
+    ): BalanceDto {
+        val credentials =
+            brokerageService.getCredentials(userId)
+                ?: throw TujaException("CREDENTIALS_NOT_FOUND", "API 키가 등록되어 있지 않습니다.", HttpStatus.NOT_FOUND)
         val accessToken = kisTokenService.getToken(userId, credentials.appKey, credentials.appSecret)
         return kisApiClient.getBalance(accessToken, credentials.appKey, credentials.appSecret, accountNo)
     }

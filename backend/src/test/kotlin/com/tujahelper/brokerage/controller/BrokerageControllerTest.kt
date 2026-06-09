@@ -1,14 +1,12 @@
 package com.tujahelper.brokerage.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ninjasquad.springmockk.MockkBean
 import com.tujahelper.auth.service.JwtProvider
 import com.tujahelper.brokerage.dto.SaveCredentialsRequest
 import com.tujahelper.brokerage.service.BrokerageService
-import com.tujahelper.brokerage.service.DecryptedCredentials
 import com.tujahelper.config.EmbeddedRedisConfig
-import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.verify
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -25,7 +23,6 @@ import org.springframework.test.web.servlet.post
 @ActiveProfiles("test")
 @Import(EmbeddedRedisConfig::class)
 class BrokerageControllerTest {
-
     @Autowired
     lateinit var mockMvc: MockMvc
 
@@ -53,11 +50,12 @@ class BrokerageControllerTest {
                 appKey = "enc-key", appSecret = "enc-secret", accountNo = "12345678901234",
             )
 
-        val request = SaveCredentialsRequest(
-            appKey = "my-app-key",
-            appSecret = "my-app-secret",
-            accountNo = "12345678901234",
-        )
+        val request =
+            SaveCredentialsRequest(
+                appKey = "my-app-key",
+                appSecret = "my-app-secret",
+                accountNo = "12345678901234",
+            )
 
         mockMvc.post("/api/v1/brokerage/credentials") {
             header("Authorization", "Bearer $accessToken")
@@ -71,11 +69,12 @@ class BrokerageControllerTest {
 
     @Test
     fun `POST brokerage_credentials_토큰_없이_접근_401`() {
-        val request = SaveCredentialsRequest(
-            appKey = "my-app-key",
-            appSecret = "my-app-secret",
-            accountNo = "12345678901234",
-        )
+        val request =
+            SaveCredentialsRequest(
+                appKey = "my-app-key",
+                appSecret = "my-app-secret",
+                accountNo = "12345678901234",
+            )
 
         mockMvc.post("/api/v1/brokerage/credentials") {
             contentType = MediaType.APPLICATION_JSON
@@ -90,11 +89,12 @@ class BrokerageControllerTest {
         val userId = 1L
         val accessToken = jwtProvider.createAccessToken(userId)
 
-        val request = SaveCredentialsRequest(
-            appKey = "",
-            appSecret = "my-app-secret",
-            accountNo = "12345678901234",
-        )
+        val request =
+            SaveCredentialsRequest(
+                appKey = "",
+                appSecret = "my-app-secret",
+                accountNo = "12345678901234",
+            )
 
         mockMvc.post("/api/v1/brokerage/credentials") {
             header("Authorization", "Bearer $accessToken")
