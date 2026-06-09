@@ -6,7 +6,7 @@ import 'dto/account_dto.dart';
 export 'dto/account_dto.dart';
 
 abstract class AccountRepository {
-  Future<CredentialResponse> registerCredential({
+  Future<void> registerCredential({
     required String appKey,
     required String appSecret,
     required String accountNo,
@@ -23,7 +23,7 @@ class AccountRepositoryImpl implements AccountRepository {
   AccountRepositoryImpl(this._api);
 
   @override
-  Future<CredentialResponse> registerCredential({
+  Future<void> registerCredential({
     required String appKey,
     required String appSecret,
     required String accountNo,

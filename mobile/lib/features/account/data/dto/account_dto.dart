@@ -10,52 +10,23 @@ class AccountInfo {
       );
 }
 
-class HoldingItem {
-  final String stockCode;
-  final String stockName;
-  final int quantity;
-  final String evaluationAmount;
-
-  HoldingItem({
-    required this.stockCode,
-    required this.stockName,
-    required this.quantity,
-    required this.evaluationAmount,
-  });
-
-  factory HoldingItem.fromJson(Map<String, dynamic> json) => HoldingItem(
-        stockCode: json['stockCode'] as String,
-        stockName: json['stockName'] as String,
-        quantity: json['quantity'] as int,
-        evaluationAmount: json['evaluationAmount'] as String,
-      );
-}
-
 class BalanceData {
-  final String totalEvaluationAmount;
-  final String depositAmount;
-  final List<HoldingItem> holdings;
+  final num totalEvaluationAmount;
+  final num depositAmount;
+  final num totalProfitLossAmount;
+  final num totalProfitLossRate;
 
   BalanceData({
     required this.totalEvaluationAmount,
     required this.depositAmount,
-    required this.holdings,
+    required this.totalProfitLossAmount,
+    required this.totalProfitLossRate,
   });
 
   factory BalanceData.fromJson(Map<String, dynamic> json) => BalanceData(
-        totalEvaluationAmount: json['totalEvaluationAmount'] as String,
-        depositAmount: json['depositAmount'] as String,
-        holdings: (json['holdings'] as List<dynamic>)
-            .map((e) => HoldingItem.fromJson(e as Map<String, dynamic>))
-            .toList(),
+        totalEvaluationAmount: json['totalEvaluationAmount'] as num,
+        depositAmount: json['depositAmount'] as num,
+        totalProfitLossAmount: json['totalProfitLossAmount'] as num,
+        totalProfitLossRate: json['totalProfitLossRate'] as num,
       );
-}
-
-class CredentialResponse {
-  final int id;
-
-  CredentialResponse({required this.id});
-
-  factory CredentialResponse.fromJson(Map<String, dynamic> json) =>
-      CredentialResponse(id: json['id'] as int);
 }

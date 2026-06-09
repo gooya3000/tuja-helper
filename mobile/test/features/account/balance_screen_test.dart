@@ -36,9 +36,10 @@ void main() {
       await tester.pumpWidget(buildWidget(
         initialState: AccountStateLoaded(
           balance: BalanceData(
-            totalEvaluationAmount: '10000000',
-            depositAmount: '5000000',
-            holdings: [],
+            totalEvaluationAmount: 10000000,
+            depositAmount: 5000000,
+            totalProfitLossAmount: 500000,
+            totalProfitLossRate: 5.0,
           ),
         ),
       ));
@@ -47,46 +48,36 @@ void main() {
       expect(find.textContaining('5000000'), findsOneWidget);
     });
 
-    testWidgets('보유_종목_없을때_안내_메시지_표시', (tester) async {
+    testWidgets('평가손익과_수익률_표시', (tester) async {
       await tester.pumpWidget(buildWidget(
         initialState: AccountStateLoaded(
           balance: BalanceData(
-            totalEvaluationAmount: '5000000',
-            depositAmount: '5000000',
-            holdings: [],
+            totalEvaluationAmount: 10000000,
+            depositAmount: 5000000,
+            totalProfitLossAmount: 500000,
+            totalProfitLossRate: 5.0,
           ),
         ),
       ));
 
-      expect(find.text('보유 종목이 없습니다'), findsOneWidget);
+      // '평가손익: 500000' 텍스트 전체로 매치 (예수금 5000000과 겹치지 않도록)
+      expect(find.textContaining('평가손익: 500000'), findsOneWidget);
+      expect(find.textContaining('5.0%'), findsOneWidget);
     });
 
-    testWidgets('보유_종목_목록_표시', (tester) async {
+    testWidgets('수익률_0인_경우_정상_표시', (tester) async {
       await tester.pumpWidget(buildWidget(
         initialState: AccountStateLoaded(
           balance: BalanceData(
-            totalEvaluationAmount: '10000000',
-            depositAmount: '3000000',
-            holdings: [
-              HoldingItem(
-                stockCode: '005930',
-                stockName: '삼성전자',
-                quantity: 10,
-                evaluationAmount: '700000',
-              ),
-              HoldingItem(
-                stockCode: '000660',
-                stockName: 'SK하이닉스',
-                quantity: 5,
-                evaluationAmount: '600000',
-              ),
-            ],
+            totalEvaluationAmount: 5000000,
+            depositAmount: 5000000,
+            totalProfitLossAmount: 0,
+            totalProfitLossRate: 0.0,
           ),
         ),
       ));
 
-      expect(find.text('삼성전자'), findsOneWidget);
-      expect(find.text('SK하이닉스'), findsOneWidget);
+      expect(find.textContaining('5000000'), findsWidgets);
     });
   });
 
@@ -151,7 +142,7 @@ class _NoOpRepository implements AccountRepository {
   }
 
   @override
-  Future<CredentialResponse> registerCredential({
+  Future<void> registerCredential({
     required String appKey,
     required String appSecret,
     required String accountNo,

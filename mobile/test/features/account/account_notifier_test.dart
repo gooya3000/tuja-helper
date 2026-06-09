@@ -33,18 +33,13 @@ void main() {
 
   group('AccountNotifier - 잔고 조회', () {
     test('잔고_조회_성공_loaded_상태로_변경', () async {
+      // backend BalanceDto: holdings 없음, 4개 수치 필드
       when(() => mockRepository.getBalance(any())).thenAnswer(
         (_) async => BalanceData(
-          totalEvaluationAmount: '10000000',
-          depositAmount: '5000000',
-          holdings: [
-            HoldingItem(
-              stockCode: '005930',
-              stockName: '삼성전자',
-              quantity: 10,
-              evaluationAmount: '700000',
-            ),
-          ],
+          totalEvaluationAmount: 10000000,
+          depositAmount: 5000000,
+          totalProfitLossAmount: 500000,
+          totalProfitLossRate: 5.0,
         ),
       );
 
@@ -54,10 +49,10 @@ void main() {
       final state = container.read(accountNotifierProvider);
       expect(state, isA<AccountStateLoaded>());
       final loaded = state as AccountStateLoaded;
-      expect(loaded.balance.totalEvaluationAmount, equals('10000000'));
-      expect(loaded.balance.depositAmount, equals('5000000'));
-      expect(loaded.balance.holdings.length, equals(1));
-      expect(loaded.balance.holdings.first.stockName, equals('삼성전자'));
+      expect(loaded.balance.totalEvaluationAmount, equals(10000000));
+      expect(loaded.balance.depositAmount, equals(5000000));
+      expect(loaded.balance.totalProfitLossAmount, equals(500000));
+      expect(loaded.balance.totalProfitLossRate, equals(5.0));
     });
 
     test('잔고_조회_실패_error_상태로_변경', () async {
@@ -77,12 +72,13 @@ void main() {
       expect((state as AccountStateError).message, isNotEmpty);
     });
 
-    test('잔고_조회_보유_종목_없을때_빈_목록_반환', () async {
+    test('잔고_조회_수익률_0인_경우_정상_반환', () async {
       when(() => mockRepository.getBalance(any())).thenAnswer(
         (_) async => BalanceData(
-          totalEvaluationAmount: '5000000',
-          depositAmount: '5000000',
-          holdings: [],
+          totalEvaluationAmount: 5000000,
+          depositAmount: 5000000,
+          totalProfitLossAmount: 0,
+          totalProfitLossRate: 0.0,
         ),
       );
 
@@ -92,7 +88,7 @@ void main() {
       final state = container.read(accountNotifierProvider);
       expect(state, isA<AccountStateLoaded>());
       final loaded = state as AccountStateLoaded;
-      expect(loaded.balance.holdings, isEmpty);
+      expect(loaded.balance.totalProfitLossRate, equals(0.0));
     });
 
     test('잔고_조회_중_loading_상태', () async {
@@ -102,9 +98,10 @@ void main() {
 
       when(() => mockRepository.getBalance(any())).thenAnswer(
         (_) async => BalanceData(
-          totalEvaluationAmount: '0',
-          depositAmount: '0',
-          holdings: [],
+          totalEvaluationAmount: 0,
+          depositAmount: 0,
+          totalProfitLossAmount: 0,
+          totalProfitLossRate: 0.0,
         ),
       );
 
@@ -120,12 +117,13 @@ void main() {
 
   group('AccountNotifier - API Key 등록', () {
     test('API_Key_등록_성공_initial_상태로_복귀', () async {
+      // backend: ApiResponse<Unit> — void 반환
       when(() => mockRepository.registerCredential(
             appKey: any(named: 'appKey'),
             appSecret: any(named: 'appSecret'),
             accountNo: any(named: 'accountNo'),
           )).thenAnswer(
-        (_) async => CredentialResponse(id: 1),
+        (_) async {},
       );
 
       final notifier = container.read(accountNotifierProvider.notifier);

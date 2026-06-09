@@ -1,97 +1,58 @@
 package com.tujahelper.brokerage.domain
 
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
 /**
- * BrokerageCredential 엔티티 + AES-256 암호화/복호화 단위 테스트
+ * BrokerageCredential 엔티티 단위 테스트
  *
- * Red 단계: 구현 전이므로 컴파일 오류가 발생한다.
+ * 엔티티 자체는 암호화 책임이 없다.
+ * 암호화는 EncryptionService가 담당하며, EncryptionServiceTest에서 검증한다.
  */
 class BrokerageCredentialTest {
 
-    // 테스트용 32바이트(256비트) AES 키
-    private val testEncryptionKey = "test-aes-key-32bytes!!!!!!!!"
-
-    // -------------------------------------------------------------------------
-    // 엔티티 생성 테스트
-    // -------------------------------------------------------------------------
-
     @Test
-    fun `BrokerageCredential_생성_시_appKey와_appSecret이_암호화되어_저장된다`() {
-        val plainAppKey = "KISDevKey1234567"
-        val plainAppSecret = "KISDevSecret9876543210ABCDEFGHIJ"
-
+    fun `BrokerageCredential_생성_시_userId가_올바르게_저장된다`() {
         val credential = BrokerageCredential(
             userId = 1L,
-            appKey = plainAppKey,
-            appSecret = plainAppSecret,
+            appKey = "someAppKey",
+            appSecret = "someAppSecret",
             accountNo = "12345678-01",
-            encryptionKey = testEncryptionKey,
         )
 
-        // 저장된 값은 평문과 달라야 한다 (암호화됨)
-        assertThat(credential.appKey).isNotEqualTo(plainAppKey)
-        assertThat(credential.appSecret).isNotEqualTo(plainAppSecret)
+        assertThat(credential.userId).isEqualTo(1L)
     }
 
     @Test
-    fun `BrokerageCredential_getDecryptedAppKey_원래_appKey를_반환한다`() {
-        val plainAppKey = "KISDevKey1234567"
+    fun `BrokerageCredential_생성_시_appKey가_그대로_저장된다`() {
+        val appKey = "KISDevKey1234567"
 
         val credential = BrokerageCredential(
             userId = 1L,
-            appKey = plainAppKey,
-            appSecret = "KISDevSecret9876543210ABCDEFGHIJ",
+            appKey = appKey,
+            appSecret = "someAppSecret",
             accountNo = "12345678-01",
-            encryptionKey = testEncryptionKey,
         )
 
-        assertThat(credential.getDecryptedAppKey()).isEqualTo(plainAppKey)
+        assertThat(credential.appKey).isEqualTo(appKey)
     }
 
     @Test
-    fun `BrokerageCredential_getDecryptedAppSecret_원래_appSecret을_반환한다`() {
-        val plainAppSecret = "KISDevSecret9876543210ABCDEFGHIJ"
+    fun `BrokerageCredential_생성_시_appSecret이_그대로_저장된다`() {
+        val appSecret = "KISDevSecret9876543210ABCDEFGHIJ"
 
         val credential = BrokerageCredential(
             userId = 1L,
             appKey = "KISDevKey1234567",
-            appSecret = plainAppSecret,
+            appSecret = appSecret,
             accountNo = "12345678-01",
-            encryptionKey = testEncryptionKey,
         )
 
-        assertThat(credential.getDecryptedAppSecret()).isEqualTo(plainAppSecret)
+        assertThat(credential.appSecret).isEqualTo(appSecret)
     }
 
     @Test
-    fun `BrokerageCredential_동일_평문으로_생성된_두_엔티티의_암호문이_다를_수_있다`() {
-        // AES-CBC/GCM 모드에서 IV가 랜덤이라면 동일 평문도 다른 암호문이 나온다
-        val plainAppKey = "KISDevKey1234567"
-
-        val credential1 = BrokerageCredential(
-            userId = 1L,
-            appKey = plainAppKey,
-            appSecret = "secret",
-            accountNo = "12345678-01",
-            encryptionKey = testEncryptionKey,
-        )
-        val credential2 = BrokerageCredential(
-            userId = 2L,
-            appKey = plainAppKey,
-            appSecret = "secret",
-            accountNo = "12345678-01",
-            encryptionKey = testEncryptionKey,
-        )
-
-        // 복호화 값은 동일해야 한다
-        assertThat(credential1.getDecryptedAppKey()).isEqualTo(credential2.getDecryptedAppKey())
-    }
-
-    @Test
-    fun `BrokerageCredential_accountNo는_평문으로_저장된다`() {
+    fun `BrokerageCredential_생성_시_accountNo가_그대로_저장된다`() {
         val accountNo = "12345678-01"
 
         val credential = BrokerageCredential(
@@ -99,9 +60,36 @@ class BrokerageCredentialTest {
             appKey = "KISDevKey1234567",
             appSecret = "KISDevSecret9876543210ABCDEFGHIJ",
             accountNo = accountNo,
-            encryptionKey = testEncryptionKey,
         )
 
         assertThat(credential.accountNo).isEqualTo(accountNo)
+    }
+
+    @Test
+    fun `BrokerageCredential_appKey_업데이트`() {
+        val credential = BrokerageCredential(
+            userId = 1L,
+            appKey = "oldKey",
+            appSecret = "someAppSecret",
+            accountNo = "12345678-01",
+        )
+
+        credential.appKey = "newKey"
+
+        assertThat(credential.appKey).isEqualTo("newKey")
+    }
+
+    @Test
+    fun `BrokerageCredential_appSecret_업데이트`() {
+        val credential = BrokerageCredential(
+            userId = 1L,
+            appKey = "someAppKey",
+            appSecret = "oldSecret",
+            accountNo = "12345678-01",
+        )
+
+        credential.appSecret = "newSecret"
+
+        assertThat(credential.appSecret).isEqualTo("newSecret")
     }
 }

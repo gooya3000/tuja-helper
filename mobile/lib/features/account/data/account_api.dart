@@ -6,12 +6,13 @@ class AccountApi {
 
   AccountApi(this._client);
 
-  Future<CredentialResponse> registerCredential({
+  // backend: ApiResponse<Unit> — data는 null/빈 객체이므로 반환값 없음
+  Future<void> registerCredential({
     required String appKey,
     required String appSecret,
     required String accountNo,
   }) async {
-    final response = await _client.post(
+    await _client.post(
       '/brokerage/credentials',
       data: {
         'appKey': appKey,
@@ -19,13 +20,12 @@ class AccountApi {
         'accountNo': accountNo,
       },
     );
-    return CredentialResponse.fromJson(response['data'] as Map<String, dynamic>);
   }
 
+  // backend: ApiResponse<List<AccountDto>> — data가 직접 배열
   Future<List<AccountInfo>> getAccounts() async {
     final response = await _client.get('/accounts');
-    final data = response['data'] as Map<String, dynamic>;
-    return (data['accounts'] as List<dynamic>)
+    return (response['data'] as List<dynamic>)
         .map((e) => AccountInfo.fromJson(e as Map<String, dynamic>))
         .toList();
   }

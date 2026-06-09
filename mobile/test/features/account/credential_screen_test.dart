@@ -53,11 +53,12 @@ void main() {
 
   group('CredentialScreen - 등록 성공', () {
     testWidgets('등록_성공_시_성공_메시지_표시', (tester) async {
+      // backend: ApiResponse<Unit> — void 반환
       when(() => mockRepository.registerCredential(
             appKey: any(named: 'appKey'),
             appSecret: any(named: 'appSecret'),
             accountNo: any(named: 'accountNo'),
-          )).thenAnswer((_) async => CredentialResponse(id: 1));
+          )).thenAnswer((_) async {});
 
       await tester.pumpWidget(buildWidget());
 

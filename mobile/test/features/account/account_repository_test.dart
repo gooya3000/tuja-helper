@@ -19,14 +19,13 @@ void main() {
 
   group('AccountRepository - 계좌 목록 조회', () {
     test('getAccounts_정상_응답_계좌_목록_반환', () async {
+      // backend: ApiResponse<List<AccountDto>> — data가 직접 배열
       when(() => mockApiClient.get('/accounts')).thenAnswer(
         (_) async => {
           'success': true,
-          'data': {
-            'accounts': [
-              {'accountNo': '12345678-01', 'accountName': '주식계좌'},
-            ],
-          },
+          'data': [
+            {'accountNo': '12345678-01', 'accountName': '주식계좌'},
+          ],
         },
       );
 
@@ -55,32 +54,26 @@ void main() {
 
   group('AccountRepository - 잔고 조회', () {
     test('getBalance_정상_응답_잔고_데이터_반환', () async {
+      // backend: BalanceDto — totalEvaluationAmount, depositAmount, totalProfitLossAmount, totalProfitLossRate
       when(() => mockApiClient.get('/accounts/12345678-01/balance'))
           .thenAnswer(
         (_) async => {
           'success': true,
           'data': {
-            'totalEvaluationAmount': '10000000',
-            'depositAmount': '5000000',
-            'holdings': [
-              {
-                'stockCode': '005930',
-                'stockName': '삼성전자',
-                'quantity': 10,
-                'evaluationAmount': '700000',
-              },
-            ],
+            'totalEvaluationAmount': 10000000,
+            'depositAmount': 5000000,
+            'totalProfitLossAmount': 500000,
+            'totalProfitLossRate': 5.0,
           },
         },
       );
 
       final result = await repository.getBalance('12345678-01');
 
-      expect(result.totalEvaluationAmount, equals('10000000'));
-      expect(result.depositAmount, equals('5000000'));
-      expect(result.holdings.length, equals(1));
-      expect(result.holdings.first.stockName, equals('삼성전자'));
-      expect(result.holdings.first.quantity, equals(10));
+      expect(result.totalEvaluationAmount, equals(10000000));
+      expect(result.depositAmount, equals(5000000));
+      expect(result.totalProfitLossAmount, equals(500000));
+      expect(result.totalProfitLossRate, equals(5.0));
     });
 
     test('getBalance_CREDENTIAL_NOT_FOUND_예외_발생', () async {
@@ -100,44 +93,48 @@ void main() {
       );
     });
 
-    test('getBalance_빈_보유_종목_목록_반환', () async {
+    test('getBalance_수익률_0인_경우_정상_반환', () async {
       when(() => mockApiClient.get('/accounts/12345678-01/balance'))
           .thenAnswer(
         (_) async => {
           'success': true,
           'data': {
-            'totalEvaluationAmount': '5000000',
-            'depositAmount': '5000000',
-            'holdings': [],
+            'totalEvaluationAmount': 5000000,
+            'depositAmount': 5000000,
+            'totalProfitLossAmount': 0,
+            'totalProfitLossRate': 0.0,
           },
         },
       );
 
       final result = await repository.getBalance('12345678-01');
 
-      expect(result.holdings, isEmpty);
+      expect(result.totalProfitLossAmount, equals(0));
+      expect(result.totalProfitLossRate, equals(0.0));
     });
   });
 
   group('AccountRepository - API Key 등록', () {
-    test('registerCredential_정상_응답_CredentialResponse_반환', () async {
+    test('registerCredential_정상_응답_완료', () async {
+      // backend: ApiResponse<Unit> — data 없음, success: true 만 반환
       when(() => mockApiClient.post(
             '/brokerage/credentials',
             data: any(named: 'data'),
           )).thenAnswer(
         (_) async => {
           'success': true,
-          'data': {'id': 1},
         },
       );
 
-      final result = await repository.registerCredential(
-        appKey: 'test_app_key',
-        appSecret: 'test_app_secret',
-        accountNo: '12345678-01',
+      // void 반환이므로 예외 없이 완료되면 성공
+      await expectLater(
+        repository.registerCredential(
+          appKey: 'test_app_key',
+          appSecret: 'test_app_secret',
+          accountNo: '12345678-01',
+        ),
+        completes,
       );
-
-      expect(result.id, equals(1));
     });
 
     test('registerCredential_중복_DUPLICATE_CREDENTIAL_예외_발생', () async {

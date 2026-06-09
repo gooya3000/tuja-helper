@@ -57,25 +57,10 @@ class BalanceScreen extends ConsumerWidget {
             Text('총 평가금액: ${balance.totalEvaluationAmount}'),
             const SizedBox(height: 8),
             Text('예수금: ${balance.depositAmount}'),
-            const SizedBox(height: 16),
-            const Text('보유 종목', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            if (balance.holdings.isEmpty)
-              const Text('보유 종목이 없습니다')
-            else
-              Expanded(
-                child: ListView.builder(
-                  itemCount: balance.holdings.length,
-                  itemBuilder: (context, index) {
-                    final item = balance.holdings[index];
-                    return ListTile(
-                      title: Text(item.stockName),
-                      subtitle: Text('수량: ${item.quantity}'),
-                      trailing: Text(item.evaluationAmount),
-                    );
-                  },
-                ),
-              ),
+            Text('평가손익: ${balance.totalProfitLossAmount}'),
+            const SizedBox(height: 8),
+            Text('수익률: ${balance.totalProfitLossRate}%'),
           ],
         ),
       );
