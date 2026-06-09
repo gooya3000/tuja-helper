@@ -5,6 +5,8 @@ ROOT=$(git rev-parse --show-toplevel)
 BACKEND="$ROOT/backend"
 MOBILE="$ROOT/mobile"
 
+export PATH="$PATH:/Users/soyoung/Desktop/dev/flutter/bin"
+
 fail() {
     echo ""
     echo "[PUSH 차단] $1"
